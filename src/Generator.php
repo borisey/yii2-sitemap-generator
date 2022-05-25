@@ -7,7 +7,7 @@ namespace Borisey\Yii2SitemapGenerator;
 
 use Yii;
 
-class SitemapGeneratorController
+class Generator
 {
     //todo:: Создавать директории, если их нет на сервере
     const SITEMAP_PATH = 'web/sitemaps';
