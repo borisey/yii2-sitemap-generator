@@ -1,0 +1,12 @@
+{
+  "name": "borisey/yii2-sitemap-generator",
+  "description": "A short description of what your package does",
+  "require": {
+    "php": ">=7.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Borisey\\Yii2SitemapGenerator\\": "src/"
+    }
+  }
+}
