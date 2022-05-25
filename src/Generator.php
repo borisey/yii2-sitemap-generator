@@ -14,26 +14,31 @@ class Generator
     const DIR = '/enc/';
     const FILE_TITLE = 'enc_';
     const SITEMAP_INDEX_FILE_TITLE = 'sitemap_index.xml';
-    const URL = 'http://example.ru';
     const URL_PATH = '/enc/';
     const ID = '0';
     const FILE_ID = '1';
 
-    public function generate($tableName, $route)
+    public $tableName;
+    public $route;
+    public $host;
+    
+    public function generate($tableName, $route, $host)
     {
+        $this->tableName = $tableName;
+        $this->route     = $route;
+        $this->host      = $host;
+
         // Создаем все файлы карт сайта
-        $this->createAllSitemaps($tableName, $route);
+        $this->createAllSitemaps();
     }
 
     /**
      * Метод создает все файлы карт сайта
-     * @param $tableName
-     * @param $route
      */
-    private function createAllSitemaps($tableName, $route)
+    private function createAllSitemaps()
     {
         // Создаем карты сайта переданных словарей
-        $this->createSitemaps($tableName, $route);
+        $this->createSitemaps($this->tableName, $this->route);
     }
 
     /**
@@ -55,7 +60,7 @@ class Generator
             $filePath = $sitemapsDir . $item;
             if (is_file($filePath)) {
                 // Добавляем ссылки на карты сайта
-                $sitemapLocPath = "<sitemap><loc>" . self::URL . '/' . $filePath . "</loc></sitemap>\n";
+                $sitemapLocPath = "<sitemap><loc>" . $this->host . '/' . $filePath . "</loc></sitemap>\n";
                 file_put_contents($sitemapIndexPath, $sitemapLocPath, FILE_APPEND | LOCK_EX);
             }
         }
@@ -95,20 +100,19 @@ class Generator
      *
      * @param $activeDicts
      */
-    private function createSitemaps($tableName, $route)
+    private function createSitemaps()
     {
-        $count = $this->getCount($tableName);
-        $this->createSitemapsIndex(self::ID, $count, $tableName, $route);
+        $count = $this->getCount();
+        $this->createSitemapsIndex(self::ID, $count);
     }
 
     /**
      * Получаем общее количество записей в базе
-     * @param $tableName
      * @return mixed
      * @throws \yii\db\Exception
      */
-    private function getCount($tableName) {
-        $count = Yii::$app->db->createCommand("SELECT COUNT(*) FROM {$tableName}")
+    private function getCount() {
+        $count = Yii::$app->db->createCommand("SELECT COUNT(*) FROM {$this->tableName}")
             ->queryOne();
 
         return $count['COUNT(*)'];
@@ -118,12 +122,11 @@ class Generator
      * Метод получает 50000 строк из переданной таблицы
      *
      * @param $id
-     * @param $tableName
      * @return mixed
      * @throws \yii\db\Exception
      */
-    private function getData($id, $tableName) {
-        return Yii::$app->db->createCommand("SELECT `id` FROM {$tableName} WHERE `id` > {$id} ORDER BY `id` ASC LIMIT 50000")
+    private function getData($id) {
+        return Yii::$app->db->createCommand("SELECT `id` FROM {$this->tableName} WHERE `id` > {$id} ORDER BY `id` ASC LIMIT 50000")
             ->queryAll();
     }
 
@@ -131,16 +134,15 @@ class Generator
      * Создаем карту сайта конкретного словаря
      *
      * @param $data
-     * @param $route
      * @param $fileId
      */
-    private function createSitemap($data, $route, $fileId) {
+    private function createSitemap($data, $fileId) {
         $start = "<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.sitemaps.org/schemas/sitemap/0.9http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd'>\n";
-        $sitemapPath = self::SITEMAP_PATH . self::DIR . $route . '_' . $fileId . '.xml';
+        $sitemapPath = self::SITEMAP_PATH . self::DIR . $this->route . '_' . $fileId . '.xml';
         file_put_contents($sitemapPath, $start, FILE_APPEND | LOCK_EX);
 
         foreach ($data as $item) {
-            $urlLoc = "<url><loc>" . self::URL . '/d/' . $route . '/' . $item['id'] . "/</loc></url>\n";
+            $urlLoc = "<url><loc>" . $this->host . '/d/' . $this->route . '/' . $item['id'] . "/</loc></url>\n";
             file_put_contents($sitemapPath, $urlLoc, FILE_APPEND | LOCK_EX);
         }
 
@@ -155,10 +157,8 @@ class Generator
      *
      * @param $id
      * @param $count
-     * @param $tableName
-     * @param $route
      */
-    private function createSitemapsIndex($id, $count, $tableName, $route) {
+    private function createSitemapsIndex($id, $count) {
         $fileId = self::FILE_ID;
 
         // Запускаем цикл создания карт сайта.
@@ -167,14 +167,14 @@ class Generator
         while ($id <= $count)
         {
             // Удаляем существующий файл карты сайта
-            $this->delExistsFiles($route, $fileId);
+            $this->delExistsFiles($this->route, $fileId);
 
-            $data = $this->getData($id, $tableName);
+            $data = $this->getData($id, $this->tableName);
 
-            $this->createSitemap($data, $route, $fileId);
+            $this->createSitemap($data, $this->route, $fileId);
 
             // Создаем массив карт сайта
-            $this->sitemaps[] = $route . '_' . $fileId . '.xml';
+            $this->sitemaps[] = $this->route . '_' . $fileId . '.xml';
 
             // Увеличиваем счетчики id и file
             $id = $id + 50000;
@@ -185,12 +185,11 @@ class Generator
     /**
      * Удаляем переданный файл карты сайта
      *
-     * @param $route
      * @param $fileId
      * @return mixed
      */
-    private function delExistsFiles($route, $fileId) {
-        $filePath = self::SITEMAP_PATH . self::DIR . $route . '_' . $fileId . '.xml';
+    private function delExistsFiles($fileId) {
+        $filePath = self::SITEMAP_PATH . self::DIR . $this->route . '_' . $fileId . '.xml';
         if (file_exists($filePath)) {
             unlink($filePath);
         }
