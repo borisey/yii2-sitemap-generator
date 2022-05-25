@@ -2,7 +2,7 @@
   "name": "borisey/yii2-sitemap-generator",
   "description": "A short description of what your package does",
   "require": {
-    "php": ">=7.4"
+    "php": ">=7.2"
   },
   "autoload": {
     "psr-4": {
