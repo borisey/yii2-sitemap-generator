@@ -171,10 +171,7 @@ class Generator
 
             $data = $this->getData($id, $this->tableName);
 
-            $this->createSitemap($data, $this->route, $fileId);
-
-            // Создаем массив карт сайта
-            $this->sitemaps[] = $this->route . '_' . $fileId . '.xml';
+            $this->createSitemap($data, $fileId);
 
             // Увеличиваем счетчики id и file
             $id = $id + 50000;
