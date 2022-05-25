@@ -3,7 +3,7 @@
  * Класс генерирует карты сайта
  */
 
-namespace Borisey\RussianParliamentApi;
+namespace Borisey\Yii2SitemapGenerator;
 
 use Yii;
 
