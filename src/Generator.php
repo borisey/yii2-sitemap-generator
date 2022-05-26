@@ -136,7 +136,7 @@ class Generator
      */
     private function createSitemap($data, $fileId) {
         $start = "<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.sitemaps.org/schemas/sitemap/0.9http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd'>\n";
-        $sitemapPath = $this->sitemapPath . $this->route . '_' . $fileId . '.xml';
+        $sitemapPath = $this->sitemapPath . $this->route . '/' . $fileId . '_' . $fileId . '.xml';
         file_put_contents($sitemapPath, $start, FILE_APPEND | LOCK_EX);
 
         foreach ($data as $item) {
