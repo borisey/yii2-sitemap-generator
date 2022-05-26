@@ -23,8 +23,8 @@ class Generator
 
     public function __construct(
         $host,
-        $sitemapPath,
-        $dir,
+        $sitemapPath = 'web/sitemaps',
+        $dir = 'enc',
         $route,
         $prefix,
         $tableName
