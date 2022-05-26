@@ -22,7 +22,7 @@ class Generator
     public $tableName;
 
     public function __construct(
-        $host,
+        $host = 'http://1slovar.ru',
         $sitemapPath = 'web/sitemaps',
         $dir = 'enc',
         $route,
