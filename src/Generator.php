@@ -16,19 +16,19 @@ class Generator
 
     public $host;
     public $sitemapPath;
-    public $urlLoc;
+    public $route;
     public $tableName;
 
     public function __construct(
         $host,
         $sitemapPath,
-        $urlLoc,
+        $route,
         $tableName
     )
     {
         $this->host        = $host;
-        $this->sitemapPath = $sitemapPath;
-        $this->urlLoc      = $urlLoc;
+        $this->sitemapPath = $host . $sitemapPath;
+        $this->route       = $host . $route;
         $this->tableName   = $tableName;
     }
 
@@ -137,7 +137,7 @@ class Generator
         file_put_contents($sitemapPath, $start, FILE_APPEND | LOCK_EX);
 
         foreach ($data as $item) {
-            $urlLoc = "<url><loc>" . $urlLoc . $item['id'] . "/</loc></url>\n";
+            $urlLoc = "<url><loc>" . $this->route . $item['id'] . "/</loc></url>\n";
             file_put_contents($sitemapPath, $urlLoc, FILE_APPEND | LOCK_EX);
         }
 
