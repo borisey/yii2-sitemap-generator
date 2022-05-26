@@ -17,18 +17,21 @@ class Generator
     public $host;
     public $sitemapPath;
     public $route;
+    public $prefix;
     public $tableName;
 
     public function __construct(
         $host,
         $sitemapPath,
         $route,
+        $prefix,
         $tableName
     )
     {
-        $this->host        = $host;
-        $this->sitemapPath = $host . $sitemapPath;
-        $this->route       = $host . $route;
+        $this->host        = $host . '/';
+        $this->sitemapPath = $host . '/' . $sitemapPath . '/';
+        $this->route       = $route;
+        $this->prefix      = $prefix;
         $this->tableName   = $tableName;
     }
 
@@ -133,11 +136,11 @@ class Generator
      */
     private function createSitemap($data, $fileId) {
         $start = "<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.sitemaps.org/schemas/sitemap/0.9http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd'>\n";
-        $sitemapPath = $this->sitemapPath . '_' . $fileId . '.xml';
+        $sitemapPath = $this->sitemapPath . $this->route . '_' . $fileId . '.xml';
         file_put_contents($sitemapPath, $start, FILE_APPEND | LOCK_EX);
 
         foreach ($data as $item) {
-            $urlLoc = "<url><loc>" . $this->route . $item['id'] . "/</loc></url>\n";
+            $urlLoc = "<url><loc>" . $this->host . $this->prefix . $item['id'] . "/</loc></url>\n";
             file_put_contents($sitemapPath, $urlLoc, FILE_APPEND | LOCK_EX);
         }
 
@@ -162,7 +165,7 @@ class Generator
         while ($id <= $count)
         {
             // Удаляем существующий файл карты сайта
-            $this->delExistsFiles($this->route, $fileId);
+            $this->delExistsFiles($fileId);
 
             $data = $this->getData($id, $this->tableName);
 
@@ -181,7 +184,7 @@ class Generator
      * @return mixed
      */
     private function delExistsFiles($fileId) {
-        $filePath = $this->sitemapPath . '_' . $fileId . '.xml';
+        $filePath = $this->sitemapPath . $this->route . '_' . $fileId . '.xml';
         if (file_exists($filePath)) {
             unlink($filePath);
         }
