@@ -51,7 +51,7 @@ class Generator
         // Удаляем главный файл карт сайта ('sitemap_index.xml')
         $this->delSitemapIndex();
 
-        $sitemapIndexPath = $this->sitemapPath . $dir . '/' . self::SITEMAP_INDEX_FILE_TITLE;
+        $sitemapIndexPath = $this->sitemapPath . $this->dir . '/' . self::SITEMAP_INDEX_FILE_TITLE;
 
         // Сохраняем в главном файле карт сайта начальную строку
         $this->putIndexSitemapStart($sitemapIndexPath);
@@ -198,8 +198,8 @@ class Generator
      */
     private function delSitemapIndex()
     {
-        if (file_exists($this->sitemapPath . self::SITEMAP_INDEX_FILE_TITLE)) {
-            unlink($this->sitemapPath . self::SITEMAP_INDEX_FILE_TITLE);
+        if (file_exists($this->sitemapPath . $this->dir . '/' . self::SITEMAP_INDEX_FILE_TITLE)) {
+            unlink($this->sitemapPath . $this->dir. '/' . self::SITEMAP_INDEX_FILE_TITLE);
         }
     }
 }
