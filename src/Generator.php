@@ -53,13 +53,13 @@ class Generator
 
         $sitemapIndexPath = $this->sitemapPath . $this->dir . '/' . self::SITEMAP_INDEX_FILE_TITLE;
 
-
-        print_r($sitemapIndexPath);
-
         // Сохраняем в главном файле карт сайта начальную строку
         $this->putIndexSitemapStart($sitemapIndexPath);
 
-        $scanResults = scandir($this->sitemapPath . $this->dir . '/');
+        $scanResults = scandir($this->sitemapPath . $this->dir);
+
+        var_dump($scanResults);
+
         foreach ($scanResults as $item) {
             $filePath = $this->sitemapPath . $item;
             if (is_file($filePath)) {
