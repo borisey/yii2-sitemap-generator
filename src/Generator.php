@@ -58,10 +58,8 @@ class Generator
 
         $scanResults = scandir($this->sitemapPath . $this->dir);
 
-        var_dump($scanResults);
-
         foreach ($scanResults as $item) {
-            $filePath = $this->sitemapPath . $item;
+            $filePath = $this->sitemapPath . $this->dir . '/' . $item;
 
             var_dump($filePath);
 
