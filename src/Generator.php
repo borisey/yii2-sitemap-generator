@@ -16,6 +16,7 @@ class Generator
 
     public $host;
     public $sitemapPath;
+    public $urlLoc;
     public $tableName;
 
     public function __construct(
