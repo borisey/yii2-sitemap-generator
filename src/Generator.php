@@ -61,12 +61,9 @@ class Generator
         foreach ($scanResults as $item) {
             $filePath = $this->sitemapPath . $this->dir . '/' . $item;
 
-            var_dump($filePath);
-
             if (is_file($filePath)) {
-                var_dump($filePath);
                 // Добавляем ссылки на карты сайта
-                $sitemapLocPath = "<sitemap><loc>" . $this->host . '/' . $filePath . "</loc></sitemap>\n";
+                $sitemapLocPath = "<sitemap><loc>" . $this->host . $filePath . "</loc></sitemap>\n";
                 file_put_contents($sitemapIndexPath, $sitemapLocPath, FILE_APPEND | LOCK_EX);
             }
         }
