@@ -189,7 +189,7 @@ class Generator
      * @return mixed
      */
     private function delExistsFiles($fileId) {
-        $filePath = $this->sitemapPath . $this->dir . $this->route . '_' . $fileId . '.xml';
+        $filePath = $this->sitemapPath . $this->dir . '/' . $this->route . '_' . $fileId . '.xml';
         if (file_exists($filePath)) {
             unlink($filePath);
         }
