@@ -51,7 +51,7 @@ class Generator
         // Удаляем главный файл карт сайта ('sitemap_index.xml')
         $this->delSitemapIndex();
 
-        $sitemapIndexPath = $this->sitemapPath . $this->dir . '/' . self::SITEMAP_INDEX_FILE_TITLE;
+        $sitemapIndexPath = __DIR__ . $this->sitemapPath . $this->dir . '/' . self::SITEMAP_INDEX_FILE_TITLE;
 
         // Сохраняем в главном файле карт сайта начальную строку
         $this->putIndexSitemapStart($sitemapIndexPath);
