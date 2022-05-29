@@ -31,7 +31,7 @@ class Generator
     )
     {
         $this->host        = $host . '/';
-        $this->sitemapPath = __DIR__  . $sitemapPath . '/';
+        $this->sitemapPath = $sitemapPath . '/';
         $this->dir         = $dir;
         $this->route       = $route;
         $this->prefix      = $prefix;
