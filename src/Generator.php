@@ -23,7 +23,7 @@ class Generator
 
     public function __construct(
         $host = 'http://1slovar.ru',
-        $sitemapPath = __DIR__  .'web/sitemaps',
+        $sitemapPath = __DIR__  . 'web/sitemaps',
         $dir = 'enc',
         $route,
         $prefix,
@@ -31,7 +31,7 @@ class Generator
     )
     {
         $this->host        = $host . '/';
-        $this->sitemapPath = $sitemapPath . '/';
+        $this->sitemapPath = __DIR__  . $sitemapPath . '/';
         $this->dir         = $dir;
         $this->route       = $route;
         $this->prefix      = $prefix;
@@ -51,7 +51,7 @@ class Generator
         // Удаляем главный файл карт сайта ('sitemap_index.xml')
         $this->delSitemapIndex();
 
-        $sitemapIndexPath = __DIR__ . $this->sitemapPath . $this->dir . '/' . self::SITEMAP_INDEX_FILE_TITLE;
+        $sitemapIndexPath = $this->sitemapPath . $this->dir . '/' . self::SITEMAP_INDEX_FILE_TITLE;
 
         // Сохраняем в главном файле карт сайта начальную строку
         $this->putIndexSitemapStart($sitemapIndexPath);
