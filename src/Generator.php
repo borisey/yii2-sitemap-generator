@@ -23,7 +23,7 @@ class Generator
 
     public function __construct(
         $host = 'http://1slovar.ru',
-        $sitemapPath = 'web/sitemaps',
+        $sitemapPath = __DIR__  .'web/sitemaps',
         $dir = 'enc',
         $route,
         $prefix,
