@@ -145,7 +145,7 @@ class Generator
         file_put_contents($sitemapPath, $start, FILE_APPEND | LOCK_EX);
 
         foreach ($data as $item) {
-            $urlLoc = "<url><loc>" . $this->host . $this->prefix . '/' . $this->route . '/' . $item['id'] . "/</loc></url>\n";
+            $urlLoc = "<url><loc>" . $this->host . $this->prefix . $this->route . '/' . $item['id'] . "/</loc></url>\n";
             file_put_contents($sitemapPath, $urlLoc, FILE_APPEND | LOCK_EX);
         }
 
