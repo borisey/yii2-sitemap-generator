@@ -64,7 +64,7 @@ class Path
             $urlLink .= $key . ($value != "" ? $item[$value] : '');
         }
 
-        return $host . $urlLink;
+        return $host . '/' . $urlLink;
     }
 
     /**
