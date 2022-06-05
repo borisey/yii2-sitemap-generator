@@ -16,29 +16,33 @@ class Generator
 
     public $host;
     public $sitemapPath;
-    public $dir;
     public $sitemapFilePrefix;
     public $url;
     public $tableName;
     public $where;
+    public $select;
 
     public function __construct(
         $host = 'http://1slovar.ru',
         $sitemapPath = __DIR__  . 'web/sitemaps',
-        $dir = 'enc',
         $sitemapFilePrefix,
         $url,
         $tableName,
         $where
     )
     {
-        $this->host              = $host . '/';
-        $this->sitemapPath       = $sitemapPath . '/';
-        $this->dir               = $dir;
+        $this->host              = $host;
+        $this->sitemapPath       = $sitemapPath;
         $this->sitemapFilePrefix = $sitemapFilePrefix;
         $this->url            = $url;
         $this->tableName         = $tableName;
         $this->where         = $where;
+
+        $select = '';
+        foreach ($this->url as $key => $value) {
+            $select .= ($value != "" ? '`' . $value . '`' : '');
+        }
+        $this->select = $select;
     }
 
     public function generate()
@@ -54,15 +58,15 @@ class Generator
         // Удаляем главный файл карт сайта ('sitemap_index.xml')
         $this->delSitemapIndex();
 
-        $sitemapIndexPath = $this->sitemapPath . $this->dir . '/' . self::SITEMAP_INDEX_FILE_TITLE;
+        $sitemapIndexPath = $this->sitemapPath . self::SITEMAP_INDEX_FILE_TITLE;
 
         // Сохраняем в главном файле карт сайта начальную строку
         $this->putIndexSitemapStart($sitemapIndexPath);
 
-        $scanResults = scandir($this->sitemapPath . $this->dir);
+        $scanResults = scandir($this->sitemapPath);
 
         foreach ($scanResults as $item) {
-            $filePath = $this->sitemapPath . $this->dir . '/' . $item;
+            $filePath = $this->sitemapPath . $item;
 
             if (is_file($filePath)) {
                 // Добавляем ссылки на карты сайта
@@ -74,7 +78,7 @@ class Generator
         // Сохраняем в главном файле карт сайта последнюю строку
         $this->putIndexSitemapEnd($sitemapIndexPath);
 
-        echo 'Файл карт сайта всех словарей успешно создан' . PHP_EOL;
+        echo 'Карта сайта "' . $filePath . '" успешно создан' . PHP_EOL;
     }
 
     /**
@@ -132,7 +136,7 @@ class Generator
      * @throws \yii\db\Exception
      */
     private function getData($id) {
-        return Yii::$app->db->createCommand("SELECT `id`,`number` FROM {$this->tableName} WHERE `id` > {$id} {$this->where} ORDER BY `id` ASC LIMIT 50000")
+        return Yii::$app->db->createCommand("SELECT {$this->select} FROM {$this->tableName} WHERE `id` > {$id} {$this->where} ORDER BY `id` ASC LIMIT 50000")
             ->queryAll();
     }
 
@@ -144,13 +148,13 @@ class Generator
      */
     private function createSitemap($data, $fileId) {
         $start = "<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.sitemaps.org/schemas/sitemap/0.9http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd'>\n";
-        $sitemapPath = $this->sitemapPath . $this->dir . '/' . $this->sitemapFilePrefix . '_' . $fileId . '.xml';
+        $sitemapPath = $this->sitemapPath . $this->sitemapFilePrefix . '_' . $fileId . '.xml';
         file_put_contents($sitemapPath, $start, FILE_APPEND | LOCK_EX);
 
         foreach ($data as $item) {
             $url = '';
             foreach ($this->url as $key => $value) {
-                $url .= $key . ($value != "" ? $item[$value] . '/' : '/');
+                $url .= $key . ($value != "" ? $item[$value] : '');
             }
 
             $urlLoc = "<url><loc>" . $this->host . $url . "</loc></url>\n";
@@ -197,7 +201,7 @@ class Generator
      * @return mixed
      */
     private function delExistsFiles($fileId) {
-        $filePath = $this->sitemapPath . $this->dir . '/' . $this->sitemapFilePrefix . '_' . $fileId . '.xml';
+        $filePath = $this->sitemapPath . $this->sitemapFilePrefix . '_' . $fileId . '.xml';
         if (file_exists($filePath)) {
             unlink($filePath);
         }
@@ -208,8 +212,8 @@ class Generator
      */
     private function delSitemapIndex()
     {
-        if (file_exists($this->sitemapPath . $this->dir . '/' . self::SITEMAP_INDEX_FILE_TITLE)) {
-            unlink($this->sitemapPath . $this->dir. '/' . self::SITEMAP_INDEX_FILE_TITLE);
+        if (file_exists($this->sitemapPath . '/' . self::SITEMAP_INDEX_FILE_TITLE)) {
+            unlink($this->sitemapPath . self::SITEMAP_INDEX_FILE_TITLE);
         }
     }
 }
