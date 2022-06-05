@@ -205,7 +205,11 @@ class Generator
      * @return mixed
      */
     private function delExistsFiles($fileId) {
-        $filePath = $this->sitemapPath . $this->sitemapFilePrefix . '_' . $fileId . '.xml';
+        $filePath = $this->getCurrentSitemapPath($fileId);
+
+//        print_r($filePath);
+//        die();
+
         if (file_exists($filePath)) {
             unlink($filePath);
         }
@@ -220,6 +224,17 @@ class Generator
         if (file_exists($sitemapIndexPath)) {
             unlink($sitemapIndexPath);
         }
+    }
+
+
+    /**
+     * Метод возвращает путь к текущему файлу карт сайта
+     *
+     * @return string
+     */
+    private function getCurrentSitemapPath($fileId)
+    {
+        return Yii::getAlias('@app') . '/web' . $this->sitemapPath . 'sitemap_' . $this->sitemapFilePrefix . '_' . $fileId . '.xml';
     }
 
     /**
