@@ -44,19 +44,13 @@ class Generator
         $this->tableName   = $tableName;
         $this->where       = $where;
         $this->query       = new Query;
-        $this->path        = new Path;
+        $this->path        = new Path($this->sitemapPath, $this->sitemapName);
 
         $select = '';
         foreach ($this->url as $key => $value) {
             $select .= ($value != "" ? '`' . $value . '`' : '');
         }
         $this->select = $select;
-
-        $sitemapPathExploded = explode('/', $this->sitemapPath);
-        $lastElement = array_key_last($sitemapPathExploded);
-        $this->sitemapFilePrefix = (!empty($sitemapPathExploded[$lastElement]))
-            ? $sitemapPathExploded[$lastElement]
-            : $sitemapPathExploded[$lastElement - 1];
     }
 
     public function generate()
@@ -138,7 +132,7 @@ class Generator
      */
     private function createSitemap($data, $fileId) {
         $start = "<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.sitemaps.org/schemas/sitemap/0.9http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd'>\n";
-        $sitemapPath = $this->getCurrentSitemapPath($fileId);
+        $sitemapPath = $this->path->getCurrentSitemapPath($fileId);
         file_put_contents($sitemapPath, $start, FILE_APPEND | LOCK_EX);
 
         foreach ($data as $item) {
@@ -188,7 +182,7 @@ class Generator
      * @return mixed
      */
     private function delExistsFiles($fileId) {
-        $filePath = $this->getCurrentSitemapPath($fileId);
+        $filePath = $this->path->getCurrentSitemapPath($fileId);
 
         if (file_exists($filePath)) {
             unlink($filePath);
@@ -200,30 +194,9 @@ class Generator
      */
     private function delSitemapIndex()
     {
-        $sitemapIndexPath = $this->getSitemapIndexPath();
+        $sitemapIndexPath = $this->path->getSitemapIndexPath();
         if (file_exists($sitemapIndexPath)) {
             unlink($sitemapIndexPath);
         }
-    }
-
-
-    /**
-     * Метод возвращает путь к текущему файлу карт сайта
-     *
-     * @return string
-     */
-    private function getCurrentSitemapPath($fileId)
-    {
-        return Yii::getAlias('@app') . '/web' . $this->sitemapPath . 'sitemap_' . $this->sitemapFilePrefix . '_' . $this->sitemapName  . '_' . $fileId . '.xml';
-    }
-
-    /**
-     * Метод возвращает путь к главному файлу карт сайта
-     *
-     * @return string
-     */
-    private function getSitemapIndexPath()
-    {
-        return Yii::getAlias('@app') . '/web' . $this->sitemapPath . '/' . self::SITEMAP_INDEX_FILE_TITLE;
     }
 }
