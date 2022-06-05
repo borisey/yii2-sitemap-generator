@@ -25,7 +25,6 @@ class Generator
     public function __construct(
         $host = 'http://1slovar.ru',
         $sitemapPath = __DIR__  . 'web/sitemaps',
-        $sitemapFilePrefix,
         $url,
         $tableName,
         $where
@@ -33,7 +32,6 @@ class Generator
     {
         $this->host              = $host;
         $this->sitemapPath       = $sitemapPath;
-        $this->sitemapFilePrefix = $sitemapFilePrefix;
         $this->url            = $url;
         $this->tableName         = $tableName;
         $this->where         = $where;
@@ -43,6 +41,12 @@ class Generator
             $select .= ($value != "" ? '`' . $value . '`' : '');
         }
         $this->select = $select;
+
+        $sitemapPathExploded = explode('/', $this->sitemapPath);
+        $lastElement = array_key_last($sitemapPathExploded);
+        $this->sitemapFilePrefix = (!empty($sitemapPathExploded[$lastElement]))
+            ? $sitemapPathExploded[$lastElement]
+            : $sitemapPathExploded[$lastElement - 1];
     }
 
     public function generate()
@@ -148,7 +152,7 @@ class Generator
      */
     private function createSitemap($data, $fileId) {
         $start = "<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.sitemaps.org/schemas/sitemap/0.9http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd'>\n";
-        $sitemapPath = $this->sitemapPath . $this->sitemapFilePrefix . '_' . $fileId . '.xml';
+        $sitemapPath = $this->sitemapPath . 'sitemap_' . $this->sitemapFilePrefix . '_' . $fileId . '.xml';
         file_put_contents($sitemapPath, $start, FILE_APPEND | LOCK_EX);
 
         foreach ($data as $item) {
