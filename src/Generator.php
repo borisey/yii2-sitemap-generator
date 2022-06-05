@@ -20,6 +20,7 @@ class Generator
     public $sitemapFilePrefix;
     public $url;
     public $tableName;
+    public $where;
 
     public function __construct(
         $host = 'http://1slovar.ru',
@@ -27,7 +28,8 @@ class Generator
         $dir = 'enc',
         $sitemapFilePrefix,
         $url,
-        $tableName
+        $tableName,
+        $where
     )
     {
         $this->host              = $host . '/';
@@ -36,6 +38,7 @@ class Generator
         $this->sitemapFilePrefix = $sitemapFilePrefix;
         $this->url            = $url;
         $this->tableName         = $tableName;
+        $this->where         = $where;
     }
 
     public function generate()
@@ -129,7 +132,7 @@ class Generator
      * @throws \yii\db\Exception
      */
     private function getData($id) {
-        return Yii::$app->db->createCommand("SELECT `id` FROM {$this->tableName} WHERE `id` > {$id} ORDER BY `id` ASC LIMIT 50000")
+        return Yii::$app->db->createCommand("SELECT `id`,`number` FROM {$this->tableName} WHERE `id` > {$id} {$this->where} ORDER BY `id` ASC LIMIT 50000")
             ->queryAll();
     }
 
@@ -145,7 +148,12 @@ class Generator
         file_put_contents($sitemapPath, $start, FILE_APPEND | LOCK_EX);
 
         foreach ($data as $item) {
-            $urlLoc = "<url><loc>" . $this->host . $this->url . '/' . $item['id'] . "/</loc></url>\n";
+            $url = '';
+            foreach ($this->url as $key => $value) {
+                $url .= $key . ($value != "" ? $item[$value] . '/' : '/');
+            }
+
+            $urlLoc = "<url><loc>" . $this->host . $url . "</loc></url>\n";
             file_put_contents($sitemapPath, $urlLoc, FILE_APPEND | LOCK_EX);
         }
 
