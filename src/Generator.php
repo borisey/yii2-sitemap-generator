@@ -17,7 +17,7 @@ class Generator
     public $host;
     public $sitemapPath;
     public $dir;
-    public $route;
+    public $sitemapFilePrefix;
     public $prefix;
     public $tableName;
 
@@ -25,17 +25,17 @@ class Generator
         $host = 'http://1slovar.ru',
         $sitemapPath = __DIR__  . 'web/sitemaps',
         $dir = 'enc',
-        $route,
+        $sitemapFilePrefix,
         $prefix,
         $tableName
     )
     {
-        $this->host        = $host . '/';
-        $this->sitemapPath = $sitemapPath . '/';
-        $this->dir         = $dir;
-        $this->route       = $route;
-        $this->prefix      = $prefix;
-        $this->tableName   = $tableName;
+        $this->host              = $host . '/';
+        $this->sitemapPath       = $sitemapPath . '/';
+        $this->dir               = $dir;
+        $this->sitemapFilePrefix = $sitemapFilePrefix;
+        $this->prefix            = $prefix;
+        $this->tableName         = $tableName;
     }
 
     public function generate()
@@ -141,11 +141,11 @@ class Generator
      */
     private function createSitemap($data, $fileId) {
         $start = "<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.sitemaps.org/schemas/sitemap/0.9http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd'>\n";
-        $sitemapPath = $this->sitemapPath . $this->dir . '/' . $this->route . '_' . $fileId . '.xml';
+        $sitemapPath = $this->sitemapPath . $this->dir . '/' . $this->sitemapFilePrefix . '_' . $fileId . '.xml';
         file_put_contents($sitemapPath, $start, FILE_APPEND | LOCK_EX);
 
         foreach ($data as $item) {
-            $urlLoc = "<url><loc>" . $this->host . $this->prefix . $this->route . '/' . $item['id'] . "/</loc></url>\n";
+            $urlLoc = "<url><loc>" . $this->host . $this->prefix . '/' . $item['id'] . "/</loc></url>\n";
             file_put_contents($sitemapPath, $urlLoc, FILE_APPEND | LOCK_EX);
         }
 
@@ -189,7 +189,7 @@ class Generator
      * @return mixed
      */
     private function delExistsFiles($fileId) {
-        $filePath = $this->sitemapPath . $this->dir . '/' . $this->route . '_' . $fileId . '.xml';
+        $filePath = $this->sitemapPath . $this->dir . '/' . $this->sitemapFilePrefix . '_' . $fileId . '.xml';
         if (file_exists($filePath)) {
             unlink($filePath);
         }
