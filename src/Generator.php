@@ -6,6 +6,7 @@
 namespace Borisey\Yii2SitemapGenerator;
 
 use Yii;
+use Borisey\Yii2SitemapGenerator\Query;
 
 class Generator
 {
@@ -22,6 +23,7 @@ class Generator
     public $tableName;
     public $where;
     public $select;
+    public $query;
 
     public function __construct(
         $host = '',
@@ -38,6 +40,7 @@ class Generator
         $this->url         = $url;
         $this->tableName   = $tableName;
         $this->where       = $where;
+        $this->query       = new Query;
 
         $select = '';
         foreach ($this->url as $key => $value) {
@@ -119,32 +122,8 @@ class Generator
      */
     private function createSitemaps()
     {
-        $count = $this->getCount();
+        $count = $this->query->getCount($this->tableName);
         $this->createSitemapsIndex(self::ID, $count);
-    }
-
-    /**
-     * Получаем общее количество записей в базе
-     * @return mixed
-     * @throws \yii\db\Exception
-     */
-    private function getCount() {
-        $count = Yii::$app->db->createCommand("SELECT COUNT(*) FROM {$this->tableName}")
-            ->queryOne();
-
-        return $count['COUNT(*)'];
-    }
-
-    /**
-     * Метод получает 50000 строк из переданной таблицы
-     *
-     * @param $id
-     * @return mixed
-     * @throws \yii\db\Exception
-     */
-    private function getData($id) {
-        return Yii::$app->db->createCommand("SELECT {$this->select} FROM {$this->tableName} WHERE `id` > {$id} {$this->where} ORDER BY `id` ASC LIMIT 50000")
-            ->queryAll();
     }
 
     /**
@@ -188,7 +167,7 @@ class Generator
             // Удаляем существующий файл карты сайта
             $this->delExistsFiles($fileId);
 
-            $data = $this->getData($id, $this->tableName);
+            $data = $this->query->getData($this->tableName, $id, $this->select, $this->where);
 
             $this->createSitemap($data, $fileId);
 
