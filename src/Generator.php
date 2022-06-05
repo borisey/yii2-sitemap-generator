@@ -216,8 +216,17 @@ class Generator
      */
     private function delSitemapIndex()
     {
-        if (file_exists(Yii::getAlias('@app') . '/web' . $this->sitemapPath . '/' . self::SITEMAP_INDEX_FILE_TITLE)) {
-            unlink(Yii::getAlias('@app') . '/web' . $this->sitemapPath . self::SITEMAP_INDEX_FILE_TITLE);
+        $sitemapIndexPath = $this->getSitemapIndexPath();
+        if (file_exists($sitemapIndexPath)) {
+            unlink($sitemapIndexPath);
         }
+    }
+
+    /**
+     * @return string
+     */
+    private function getSitemapIndexPath()
+    {
+        return Yii::getAlias('@app') . '/web' . $this->sitemapPath . '/' . self::SITEMAP_INDEX_FILE_TITLE;
     }
 }
