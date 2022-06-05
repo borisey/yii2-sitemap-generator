@@ -23,18 +23,18 @@ class Generator
     public $select;
 
     public function __construct(
-        $host = 'http://1slovar.ru',
-        $sitemapPath = __DIR__  . 'web/sitemaps',
+        $host = '',
+        $sitemapPath = __DIR__  . '/sitemaps/',
         $url,
         $tableName,
         $where
     )
     {
-        $this->host              = $host;
-        $this->sitemapPath       = $sitemapPath;
-        $this->url            = $url;
-        $this->tableName         = $tableName;
-        $this->where         = $where;
+        $this->host        = $host;
+        $this->sitemapPath = $sitemapPath;
+        $this->url         = $url;
+        $this->tableName   = $tableName;
+        $this->where       = $where;
 
         $select = '';
         foreach ($this->url as $key => $value) {
@@ -62,19 +62,19 @@ class Generator
         // Удаляем главный файл карт сайта ('sitemap_index.xml')
         $this->delSitemapIndex();
 
-        $sitemapIndexPath = $this->sitemapPath . self::SITEMAP_INDEX_FILE_TITLE;
+        $sitemapIndexPath = Yii::getAlias('@app') . '/web' . $this->sitemapPath . self::SITEMAP_INDEX_FILE_TITLE;
 
         // Сохраняем в главном файле карт сайта начальную строку
         $this->putIndexSitemapStart($sitemapIndexPath);
 
-        $scanResults = scandir($this->sitemapPath);
+        $scanResults = scandir(Yii::getAlias('@app') . '/web' . $this->sitemapPath);
 
         foreach ($scanResults as $item) {
-            $filePath = $this->sitemapPath . $item;
+            $filePath = Yii::getAlias('@app') . '/web' . $this->sitemapPath . $item;
 
-            if (is_file($filePath)) {
+            if (is_file($filePath) && $item!= self::SITEMAP_INDEX_FILE_TITLE) {
                 // Добавляем ссылки на карты сайта
-                $sitemapLocPath = "<sitemap><loc>" . $this->host . $filePath . "</loc></sitemap>\n";
+                $sitemapLocPath = "<sitemap><loc>" . $this->host . $this->sitemapPath . $item . "</loc></sitemap>\n";
                 file_put_contents($sitemapIndexPath, $sitemapLocPath, FILE_APPEND | LOCK_EX);
             }
         }
@@ -152,7 +152,7 @@ class Generator
      */
     private function createSitemap($data, $fileId) {
         $start = "<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.sitemaps.org/schemas/sitemap/0.9http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd'>\n";
-        $sitemapPath = $this->sitemapPath . 'sitemap_' . $this->sitemapFilePrefix . '_' . $fileId . '.xml';
+        $sitemapPath = Yii::getAlias('@app') . '/web' . $this->sitemapPath . 'sitemap_' . $this->sitemapFilePrefix . '_' . $fileId . '.xml';
         file_put_contents($sitemapPath, $start, FILE_APPEND | LOCK_EX);
 
         foreach ($data as $item) {
@@ -216,8 +216,8 @@ class Generator
      */
     private function delSitemapIndex()
     {
-        if (file_exists($this->sitemapPath . '/' . self::SITEMAP_INDEX_FILE_TITLE)) {
-            unlink($this->sitemapPath . self::SITEMAP_INDEX_FILE_TITLE);
+        if (file_exists(Yii::getAlias('@app') . '/web' . $this->sitemapPath . '/' . self::SITEMAP_INDEX_FILE_TITLE)) {
+            unlink(Yii::getAlias('@app') . '/web' . $this->sitemapPath . self::SITEMAP_INDEX_FILE_TITLE);
         }
     }
 }
