@@ -6,7 +6,10 @@
 namespace Borisey\Yii2SitemapGenerator;
 
 use Yii;
-use Borisey\Yii2SitemapGenerator\Query;
+use Borisey\Yii2SitemapGenerator\{
+    Query,
+    Path
+};
 
 class Generator
 {
@@ -41,6 +44,7 @@ class Generator
         $this->tableName   = $tableName;
         $this->where       = $where;
         $this->query       = new Query;
+        $this->path        = new Path;
 
         $select = '';
         foreach ($this->url as $key => $value) {
@@ -73,7 +77,7 @@ class Generator
         // Сохраняем в главном файле карт сайта начальную строку
         $this->putIndexSitemapStart($sitemapIndexPath);
 
-        $scanResults = scandir($this->getSitemapsDir());
+        $scanResults = scandir($this->path->getSitemapsDir($this->sitemapPath));
 
         foreach ($scanResults as $item) {
             $filePath = Yii::getAlias('@app') . '/web' . $this->sitemapPath . $item;
@@ -239,13 +243,5 @@ class Generator
         return $this->host . $url;
     }
 
-    /**
-     * Метод возвращает путь к директории карт сайта
-     *
-     * @return string
-     */
-    private function getSitemapsDir()
-    {
-        return Yii::getAlias('@app') . '/web' . $this->sitemapPath;
-    }
+
 }
