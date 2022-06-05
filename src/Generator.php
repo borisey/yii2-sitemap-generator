@@ -70,7 +70,7 @@ class Generator
         // Сохраняем в главном файле карт сайта начальную строку
         $this->putIndexSitemapStart($sitemapIndexPath);
 
-        $scanResults = scandir(Yii::getAlias('@app') . '/web' . $this->sitemapPath);
+        $scanResults = scandir($this->getSitemapsDir());
 
         foreach ($scanResults as $item) {
             $filePath = Yii::getAlias('@app') . '/web' . $this->sitemapPath . $item;
@@ -207,9 +207,6 @@ class Generator
     private function delExistsFiles($fileId) {
         $filePath = $this->getCurrentSitemapPath($fileId);
 
-//        print_r($filePath);
-//        die();
-
         if (file_exists($filePath)) {
             unlink($filePath);
         }
@@ -261,5 +258,15 @@ class Generator
         }
 
         return $this->host . $url;
+    }
+
+    /**
+     * Метод возвращает путь к директории карт сайта
+     *
+     * @return string
+     */
+    private function getSitemapsDir()
+    {
+        return Yii::getAlias('@app') . '/web' . $this->sitemapPath;
     }
 }
