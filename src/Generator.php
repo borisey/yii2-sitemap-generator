@@ -159,14 +159,9 @@ class Generator
         file_put_contents($sitemapPath, $start, FILE_APPEND | LOCK_EX);
 
         foreach ($data as $item) {
-            $url = '';
-            foreach ($this->url as $key => $value) {
-                $url .= $key . ($value != "" ? $item[$value] : '');
-            }
-
             $urlLink = $this->getUrlLink($item);
 
-            $urlLoc = "<url><loc>" . $this->host . $url . "</loc></url>\n";
+            $urlLoc = "<url><loc>" . $urlLink . "</loc></url>\n";
             file_put_contents($sitemapPath, $urlLoc, FILE_APPEND | LOCK_EX);
         }
 
@@ -265,6 +260,6 @@ class Generator
             $url .= $key . ($value != "" ? $item[$value] : '');
         }
 
-        return $url;
+        return $this->host . $url;
     }
 }
