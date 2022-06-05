@@ -142,7 +142,7 @@ class Generator
         file_put_contents($sitemapPath, $start, FILE_APPEND | LOCK_EX);
 
         foreach ($data as $item) {
-            $urlLink = $this->getUrlLink($item);
+            $urlLink = $this->path->getUrlLink($this->host, $this->url, $item);
 
             $urlLoc = "<url><loc>" . $urlLink . "</loc></url>\n";
             file_put_contents($sitemapPath, $urlLoc, FILE_APPEND | LOCK_EX);
@@ -226,22 +226,4 @@ class Generator
     {
         return Yii::getAlias('@app') . '/web' . $this->sitemapPath . '/' . self::SITEMAP_INDEX_FILE_TITLE;
     }
-
-    /**
-     * Метод возвращает ссылку на элемент
-     *
-     * @param $item
-     * @return string
-     */
-    private function getUrlLink($item)
-    {
-        $url = '';
-        foreach ($this->url as $key => $value) {
-            $url .= $key . ($value != "" ? $item[$value] : '');
-        }
-
-        return $this->host . $url;
-    }
-
-
 }
