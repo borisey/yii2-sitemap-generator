@@ -155,7 +155,7 @@ class Generator
      */
     private function createSitemap($data, $fileId) {
         $start = "<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.sitemaps.org/schemas/sitemap/0.9http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd'>\n";
-        $sitemapPath = Yii::getAlias('@app') . '/web' . $this->sitemapPath . 'sitemap_' . $this->sitemapFilePrefix . '_' . $this->sitemapName  . '_' . $fileId . '.xml';
+        $sitemapPath = $this->getCurrentSitemapPath($fileId);
         file_put_contents($sitemapPath, $start, FILE_APPEND | LOCK_EX);
 
         foreach ($data as $item) {
@@ -163,6 +163,8 @@ class Generator
             foreach ($this->url as $key => $value) {
                 $url .= $key . ($value != "" ? $item[$value] : '');
             }
+
+            $urlLink = $this->getUrlLink($item);
 
             $urlLoc = "<url><loc>" . $this->host . $url . "</loc></url>\n";
             file_put_contents($sitemapPath, $urlLoc, FILE_APPEND | LOCK_EX);
@@ -237,7 +239,7 @@ class Generator
      */
     private function getCurrentSitemapPath($fileId)
     {
-        return Yii::getAlias('@app') . '/web' . $this->sitemapPath . 'sitemap_' . $this->sitemapFilePrefix . '_' . $fileId . '.xml';
+        return Yii::getAlias('@app') . '/web' . $this->sitemapPath . 'sitemap_' . $this->sitemapFilePrefix . '_' . $this->sitemapName  . '_' . $fileId . '.xml';
     }
 
     /**
@@ -248,5 +250,21 @@ class Generator
     private function getSitemapIndexPath()
     {
         return Yii::getAlias('@app') . '/web' . $this->sitemapPath . '/' . self::SITEMAP_INDEX_FILE_TITLE;
+    }
+
+    /**
+     * Метод возвращает ссылку на элемент
+     *
+     * @param $item
+     * @return string
+     */
+    private function getUrlLink($item)
+    {
+        $url = '';
+        foreach ($this->url as $key => $value) {
+            $url .= $key . ($value != "" ? $item[$value] : '');
+        }
+
+        return $url;
     }
 }
