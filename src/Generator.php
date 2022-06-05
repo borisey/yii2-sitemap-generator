@@ -18,7 +18,7 @@ class Generator
     public $sitemapPath;
     public $dir;
     public $sitemapFilePrefix;
-    public $prefix;
+    public $url;
     public $tableName;
 
     public function __construct(
@@ -26,7 +26,7 @@ class Generator
         $sitemapPath = __DIR__  . 'web/sitemaps',
         $dir = 'enc',
         $sitemapFilePrefix,
-        $prefix,
+        $url,
         $tableName
     )
     {
@@ -34,7 +34,7 @@ class Generator
         $this->sitemapPath       = $sitemapPath . '/';
         $this->dir               = $dir;
         $this->sitemapFilePrefix = $sitemapFilePrefix;
-        $this->prefix            = $prefix;
+        $this->url            = $url;
         $this->tableName         = $tableName;
     }
 
@@ -145,7 +145,7 @@ class Generator
         file_put_contents($sitemapPath, $start, FILE_APPEND | LOCK_EX);
 
         foreach ($data as $item) {
-            $urlLoc = "<url><loc>" . $this->host . $this->prefix . '/' . $item['id'] . "/</loc></url>\n";
+            $urlLoc = "<url><loc>" . $this->host . $this->url . '/' . $item['id'] . "/</loc></url>\n";
             file_put_contents($sitemapPath, $urlLoc, FILE_APPEND | LOCK_EX);
         }
 
