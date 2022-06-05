@@ -16,6 +16,7 @@ class Generator
 
     public $host;
     public $sitemapPath;
+    public $sitemapName;
     public $sitemapFilePrefix;
     public $url;
     public $tableName;
@@ -25,6 +26,7 @@ class Generator
     public function __construct(
         $host = '',
         $sitemapPath = __DIR__  . '/sitemaps/',
+        $sitemapName,
         $url,
         $tableName,
         $where
@@ -32,6 +34,7 @@ class Generator
     {
         $this->host        = $host;
         $this->sitemapPath = $sitemapPath;
+        $this->sitemapName = $sitemapName;
         $this->url         = $url;
         $this->tableName   = $tableName;
         $this->where       = $where;
@@ -82,7 +85,7 @@ class Generator
         // Сохраняем в главном файле карт сайта последнюю строку
         $this->putIndexSitemapEnd($sitemapIndexPath);
 
-        echo 'Карта сайта "' . $filePath . '" успешно создан' . PHP_EOL;
+        echo 'Карта сайта "' . $sitemapIndexPath . '" успешно создана' . PHP_EOL;
     }
 
     /**
@@ -152,7 +155,7 @@ class Generator
      */
     private function createSitemap($data, $fileId) {
         $start = "<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.sitemaps.org/schemas/sitemap/0.9http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd'>\n";
-        $sitemapPath = Yii::getAlias('@app') . '/web' . $this->sitemapPath . 'sitemap_' . $this->sitemapFilePrefix . '_' . $fileId . '.xml';
+        $sitemapPath = Yii::getAlias('@app') . '/web' . $this->sitemapPath . 'sitemap_' . $this->sitemapFilePrefix . '_' . $this->sitemapName  . '_' . $fileId . '.xml';
         file_put_contents($sitemapPath, $start, FILE_APPEND | LOCK_EX);
 
         foreach ($data as $item) {
