@@ -223,6 +223,8 @@ class Generator
     }
 
     /**
+     * Метод возвращает путь к главному файлу карт сайта
+     *
      * @return string
      */
     private function getSitemapIndexPath()
